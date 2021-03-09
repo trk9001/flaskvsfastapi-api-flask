@@ -1,6 +1,8 @@
 __all__ = ['extract_chaldal_products']
 
 import time
+from collections.abc import Callable
+from typing import Optional
 
 import bs4
 from selenium.webdriver import Firefox, FirefoxOptions
@@ -96,7 +98,11 @@ _chaldal_category_urls = [
 ]
 
 
-def _get_chaldal_page_products(webdriver: WebDriver, url: str) -> list[dict]:
+def _get_chaldal_page_products(
+        webdriver: WebDriver,
+        url: str,
+        on_product_extraction: Optional[Callable] = None,
+) -> list[dict]:
     """Scrape a chaldal.com page's source for its products' info."""
     web = webdriver
     web.get(url)
@@ -126,12 +132,18 @@ def _get_chaldal_page_products(webdriver: WebDriver, url: str) -> list[dict]:
             'amount': product.find('div', class_='subText').string,
             'price': product.find('div', class_='price')('span')[1].string
         }
+        if callable(on_product_extraction):
+            on_product_extraction(product_info)
         products.append(product_info)
 
     return products
 
 
-def extract_chaldal_products() -> list[dict]:
+def extract_chaldal_products(
+        *,
+        on_product_extraction: Optional[Callable] = None,
+        on_page_completion: Optional[Callable] = None,
+) -> list[dict]:
     """Scrape chaldal.com for their products and return their info.
 
     Super categories included:
@@ -151,7 +163,9 @@ def extract_chaldal_products() -> list[dict]:
     all_products: list[dict] = []
 
     for url in _chaldal_category_urls:
-        products = _get_chaldal_page_products(fox, url)
+        products = _get_chaldal_page_products(fox, url, on_product_extraction)
+        if callable(on_page_completion):
+            on_page_completion(products)
         all_products.extend(products)
 
     fox.quit()
