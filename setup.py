@@ -7,6 +7,7 @@ setup(
     install_package_data=True,
     install_requires=[
         'flask>=1.1.2',
+        'flask-sqlalchemy>=2.4.4',
         'selenium>=3.141.0',
         'beautifulsoup4>=4.9.3',
     ],
