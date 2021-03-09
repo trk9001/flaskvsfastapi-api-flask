@@ -113,7 +113,7 @@ def _get_chaldal_page_products(webdriver: WebDriver, url: str) -> list[dict]:
         else:
             break
 
-    soup = bs4.BeautifulSoup(web.page_source, 'html.parser')
+    soup = bs4.BeautifulSoup(web.page_source, 'lxml')
     category_header = soup.find('div', class_='categoryHeader')
     category_name = category_header.find('div', class_='name').string
 
