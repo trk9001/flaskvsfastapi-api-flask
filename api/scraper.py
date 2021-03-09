@@ -130,7 +130,8 @@ def _get_chaldal_page_products(
             'category': category_name,
             'name': product.find('div', class_='name').string,
             'amount': product.find('div', class_='subText').string,
-            'price': product.find('div', class_='price')('span')[1].string
+            'price': product.find('div', class_='price')('span')[1].string,
+            'image_source': product.img['src'],
         }
         if callable(on_product_extraction):
             on_product_extraction(product_info)
@@ -141,6 +142,7 @@ def _get_chaldal_page_products(
 
 def extract_chaldal_products(
         *,
+        urls: Optional[list] = None,
         on_product_extraction: Optional[Callable] = None,
         on_page_completion: Optional[Callable] = None,
 ) -> list[dict]:
@@ -156,13 +158,17 @@ def extract_chaldal_products(
     - its name
     - its amount (for which its price is applicable)
     - its price
+    - its image source
     """
     options = FirefoxOptions()
     options.headless = True
     fox = Firefox(options=options)
     all_products: list[dict] = []
 
-    for url in _chaldal_category_urls:
+    if urls is None:
+        urls = _chaldal_category_urls
+
+    for url in urls:
         products = _get_chaldal_page_products(fox, url, on_product_extraction)
         if callable(on_page_completion):
             on_page_completion(products)
