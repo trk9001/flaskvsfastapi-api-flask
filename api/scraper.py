@@ -102,7 +102,7 @@ def _get_chaldal_page_products(
         webdriver: WebDriver,
         url: str,
         on_product_extraction: Optional[Callable] = None,
-) -> list[dict]:
+) -> dict:
     """Scrape a chaldal.com page's source for its products' info."""
     web = webdriver
     web.get(url)
@@ -123,20 +123,24 @@ def _get_chaldal_page_products(
     category_header = soup.find('div', class_='categoryHeader')
     category_name = category_header.find('div', class_='name').string
 
-    products: list[dict] = []
+    products = {'category': category_name}
+    product_list: list[dict] = []
+
     product_pane = soup.find('div', class_='productPane')
     for product in product_pane('div', class_='product', recursive=False):  # type: bs4.Tag
         product_info = {
-            'category': category_name,
             'name': product.find('div', class_='name').string,
             'amount': product.find('div', class_='subText').string,
             'price': product.find('div', class_='price')('span')[1].string,
             'image_source': product.img['src'],
         }
         if callable(on_product_extraction):
-            on_product_extraction(product_info)
-        products.append(product_info)
+            p = product_info.copy()
+            p['category'] = category_name
+            on_product_extraction(p)
+        product_list.append(product_info)
 
+    products['products'] = product_list
     return products
 
 
@@ -172,7 +176,7 @@ def extract_chaldal_products(
         products = _get_chaldal_page_products(fox, url, on_product_extraction)
         if callable(on_page_completion):
             on_page_completion(products)
-        all_products.extend(products)
+        all_products.append(products)
 
     fox.quit()
     return all_products
