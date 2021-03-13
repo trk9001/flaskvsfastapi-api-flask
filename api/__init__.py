@@ -2,6 +2,8 @@ import os
 
 from flask import Flask
 
+from api.db import db, migrate
+
 
 def create_app(*args, **kwargs):
     """Flask application factory."""
@@ -14,8 +16,8 @@ def create_app(*args, **kwargs):
 
     app.config.from_pyfile('config.py')
 
-    from api.models import db
     db.init_app(app)
+    migrate.init_app(app, db)
 
     from api.views import index
     app.add_url_rule('/', 'index', index)
@@ -24,3 +26,4 @@ def create_app(*args, **kwargs):
 
 
 import api.views
+import api.models
