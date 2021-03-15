@@ -2,8 +2,6 @@ import os
 
 from flask import Flask
 
-from api.db import db, migrate
-
 
 def create_app(*args, **kwargs):
     """Flask application factory."""
@@ -16,8 +14,10 @@ def create_app(*args, **kwargs):
 
     app.config.from_pyfile('config.py')
 
+    from api.db import db, migrate, seed_db
     db.init_app(app)
     migrate.init_app(app, db)
+    app.cli.add_command(seed_db, 'seed-db')
 
     from api.views import index
     app.add_url_rule('/', 'index', index)
