@@ -16,7 +16,7 @@ class Product(db.Model):
     )
     amount = db.Column(
         db.String(250),
-        nullable=False,
+        nullable=True,
     )
     price = db.Column(
         db.Float(precision=2),
