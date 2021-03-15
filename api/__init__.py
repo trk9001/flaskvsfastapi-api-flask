@@ -19,10 +19,11 @@ def create_app(*args, **kwargs):
     migrate.init_app(app, db)
     app.cli.add_command(seed_db, 'seed-db')
 
-    from api.views import index
-    app.add_url_rule('/', 'index', index)
     from api.models import ma
     ma.init_app(app)
+
+    from api.views import api
+    api.init_app(app)
 
     return app
 
