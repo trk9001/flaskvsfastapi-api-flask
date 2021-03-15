@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from api import db
+from flask_marshmallow import Marshmallow
+
+from api.db import db
+
+ma = Marshmallow()
 
 
 class Product(db.Model):
@@ -33,3 +37,13 @@ class Product(db.Model):
 
     def __repr__(self):
         return f'<Product {self.name}>'
+
+
+class ProductSchema(ma.SQLAlchemyAutoSchema):
+    """Marshmallow schema for the Product model."""
+    class Meta:
+        model = Product
+
+
+product_schema = ProductSchema()
+products_schema = ProductSchema(many=True)

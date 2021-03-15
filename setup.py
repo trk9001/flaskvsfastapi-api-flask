@@ -9,6 +9,8 @@ setup(
         'flask>=1.1.2',
         'flask-sqlalchemy>=2.4.4',
         'flask-migrate>=2.7.0',
+        'flask-marshmallow>=0.14.0',
+        'marshmallow-sqlalchemy>=0.24.2',
         'selenium>=3.141.0',
         'beautifulsoup4>=4.9.3',
     ],

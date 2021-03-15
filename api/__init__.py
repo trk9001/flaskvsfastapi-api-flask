@@ -21,6 +21,8 @@ def create_app(*args, **kwargs):
 
     from api.views import index
     app.add_url_rule('/', 'index', index)
+    from api.models import ma
+    ma.init_app(app)
 
     return app
 
