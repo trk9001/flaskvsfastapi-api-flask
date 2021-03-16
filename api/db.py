@@ -22,7 +22,7 @@ def seed_db():
         return
 
     app: Flask = current_app
-    root_path = Path(app.root_path).parent
+    root_path = Path(app.root_path)
     data_file_path = root_path / 'seed-data.json'
     with open(data_file_path) as fp:
         data = json.load(fp)
